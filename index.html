@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="beem-up — le réseau social Hyrox. Suis des gens qui te ressemblent, inspire-toi de leur prépa, rejoins la bêta.">
+<style>html,body{margin:0}img{max-width:100%}</style>
+<title>beem-up</title>
+<style>
+  /* Committed dark brand, matched to the beem-up app: ink #0B0B0C ground, beem-yellow
+     accent, Barlow Condensed poster display. Layout: hero statement beside a live phone
+     mock of the real feed; the beem ⚡ is the signature interaction. */
+  :root{
+    --bg:#0B0B0C; --surface:#17181B; --surface-2:#1F2023; --line:#2A2B2F; --line-2:#3A3B40;
+    --ink:#F5F5F2; --muted:#A3A3A0; --muted-2:#8A8A87; --soft:#D4D4D0;
+    --accent:#FACC15; --on-accent:#0B0B0C;
+    --display:"Barlow Condensed",system-ui,sans-serif;
+    --body:"Barlow",system-ui,sans-serif;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.5;
+    font-size:16px;-webkit-font-smoothing:antialiased}
+  h1,h2,h3{margin:0;font-family:var(--display);font-weight:800;line-height:1;
+    text-transform:uppercase;letter-spacing:.5px;text-wrap:balance}
+  p{margin:0}
+  a{color:inherit}
+  .wrap{max-width:1120px;margin:0 auto;padding-inline:20px}
+  .eyebrow{font-family:var(--display);font-weight:700;text-transform:uppercase;
+    letter-spacing:.16em;font-size:.8rem;color:var(--accent)}
+  .bolt{color:var(--accent)}
+
+  .btn{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.04em;
+    border:none;cursor:pointer;background:var(--accent);color:var(--on-accent);
+    border-radius:999px;padding:.7em 1.3em;font-size:1rem;display:inline-flex;align-items:center;
+    gap:8px;text-decoration:none;transition:transform .12s,filter .12s;min-height:44px}
+  .btn:hover{filter:brightness(1.07);transform:translateY(-1px)}
+  .btn:active{transform:translateY(0)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line-2)}
+  .btn svg{width:18px;height:18px}
+  a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+  header{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;
+    background:color-mix(in srgb,var(--bg) 84%,transparent);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line)}
+  .hrow{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:12px}
+  .brand{font-family:var(--display);font-weight:800;font-size:1.5rem;letter-spacing:.5px;
+    text-transform:lowercase;display:flex;align-items:center;gap:2px}
+  .brand .z{color:var(--accent)}
+
+  /* Hero */
+  .hero .wrap{padding-block:clamp(40px,6vw,72px);display:grid;gap:40px;align-items:center;
+    grid-template-columns:1fr}
+  @media(min-width:880px){.hero .wrap{grid-template-columns:1.05fr .95fr;gap:48px}}
+  .hero h1{font-size:clamp(2.7rem,8vw,4.6rem);font-weight:800;letter-spacing:0}
+  .hero h1 em{font-style:normal;color:var(--accent)}
+  .lede{font-size:clamp(1.05rem,2.3vw,1.25rem);color:var(--soft);max-width:34ch;margin-top:20px}
+  .cta-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:28px}
+  .cta-note{margin-top:14px;font-size:.88rem;color:var(--muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .pill{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);
+    border-radius:999px;padding:4px 10px;font-weight:600;font-size:.8rem;color:var(--soft)}
+  .notify{margin-top:16px;max-width:440px}
+  .notify-row{display:flex;gap:10px;flex-wrap:wrap}
+  .notify input{flex:1;min-width:0;background:var(--surface);border:1.5px solid var(--line);color:var(--ink);
+    border-radius:999px;padding:.7em 1.1em;font-family:var(--body);font-size:1rem}
+  .notify-msg{margin-top:10px;font-size:.9rem;color:var(--muted);min-height:1.1em}
+  .notify-msg.ok{color:var(--accent)}
+  .notify-msg.err{color:#FF6B5A}
+
+  /* Phone mock */
+  .stage{display:flex;justify-content:center}
+  .phone{width:300px;max-width:84vw;background:#000;border:10px solid #000;border-radius:44px;
+    box-shadow:0 2px 4px rgba(0,0,0,.5),0 40px 80px -30px rgba(250,204,21,.22),0 30px 60px -24px rgba(0,0,0,.8);
+    overflow:hidden;position:relative}
+  .screen{background:var(--bg);border-radius:34px;overflow:hidden;display:flex;flex-direction:column;
+    height:600px}
+  .notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:110px;height:24px;
+    background:#000;border-radius:0 0 14px 14px;z-index:5}
+  .ph-head{padding:30px 18px 8px;display:flex;justify-content:space-between;align-items:flex-end}
+  .ph-title{font-family:var(--display);font-weight:800;font-size:28px;text-transform:uppercase;line-height:1}
+  .ph-sub{font-size:12px;color:var(--muted);margin-top:3px}
+  .gear{width:36px;height:36px;border-radius:18px;border:1px solid var(--line);background:var(--surface);
+    display:grid;place-items:center;color:var(--ink)}
+  .feed{flex:1;padding:6px 14px 0;display:flex;flex-direction:column;gap:11px;overflow:hidden}
+  .card{background:var(--surface);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:11px}
+  .card .top{display:flex;align-items:center;justify-content:space-between}
+  .usr{display:flex;align-items:center;gap:9px}
+  .ava{width:34px;height:34px;border-radius:17px;display:grid;place-items:center;font-weight:700;
+    font-family:var(--body);font-size:15px}
+  .nm{font-weight:600;font-size:14px}
+  .meta{font-size:11px;color:var(--muted)}
+  .tag{font-size:11px;font-weight:700;letter-spacing:.03em;color:var(--on-accent);background:var(--ink);
+    padding:3px 9px;border-radius:999px}
+  .stats{display:flex;gap:18px;align-items:baseline}
+  .big{font-family:var(--display);font-weight:800;font-size:38px;line-height:1}
+  .big.y{color:var(--accent)}
+  .u{font-size:13px;color:var(--muted);margin-left:3px}
+  .desc{font-size:13px;color:var(--soft)}
+  .foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:9px}
+  .feel{font-size:12px;color:var(--muted)}
+  .beem{min-height:40px;padding:0 13px;border-radius:999px;border:none;background:var(--accent);
+    color:var(--on-accent);display:inline-flex;align-items:center;gap:6px;font-weight:700;font-family:var(--body);
+    cursor:pointer;transition:transform .1s}
+  .beem.ghost{background:transparent;border:1px solid var(--line-2);color:var(--muted)}
+  .beem svg{width:15px;height:15px}
+  .beem.pop{animation:pop .4s ease}
+  @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.16)}100%{transform:scale(1)}}
+  .tabbar{height:62px;border-top:1px solid var(--surface-2);background:var(--bg);
+    display:grid;grid-template-columns:repeat(5,1fr);align-items:center;padding-top:6px}
+  .tab{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--muted-2)}
+  .tab.on{color:var(--accent)}
+  .tab svg{width:20px;height:20px}
+  .fab{width:46px;height:46px;border-radius:23px;background:var(--accent);color:var(--on-accent);
+    display:grid;place-items:center;margin-top:-10px}
+
+  /* Problem strip */
+  .strip{border-block:1px solid var(--line);background:var(--surface)}
+  .strip .wrap{padding-block:clamp(34px,5vw,50px)}
+  .cross{display:grid;gap:14px;grid-template-columns:1fr}
+  @media(min-width:640px){.cross{grid-template-columns:1fr 1fr}}
+  .x{font-family:var(--display);font-weight:700;text-transform:none;letter-spacing:0;
+    font-size:clamp(1.1rem,2.6vw,1.4rem);color:var(--muted)}
+  .x b{color:var(--ink);text-decoration:line-through;text-decoration-color:var(--accent);text-decoration-thickness:3px}
+  .turn{margin-top:24px;font-family:var(--display);font-weight:800;text-transform:none;letter-spacing:0;
+    font-size:clamp(1.4rem,4vw,2rem);max-width:24ch}
+  .turn u{text-decoration:none;color:var(--accent)}
+
+  section.block{padding-block:clamp(52px,7vw,78px)}
+  .shead{max-width:42ch;margin-bottom:34px}
+  .shead h2{font-size:clamp(1.9rem,5vw,2.9rem)}
+  .shead p{color:var(--muted);margin-top:14px;font-size:1.05rem;font-family:var(--body)}
+
+  .steps{display:grid;gap:14px;grid-template-columns:1fr}
+  @media(min-width:720px){.steps{grid-template-columns:repeat(3,1fr)}}
+  .step{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px}
+  .step .n{font-family:var(--display);font-weight:800;font-size:2.2rem;color:var(--accent);line-height:1}
+  .step h3{margin-top:10px;font-size:1.2rem;text-transform:none;letter-spacing:0}
+  .step p{margin-top:8px;color:var(--muted);font-size:.95rem}
+
+  /* beem explainer */
+  .beemrow{display:grid;gap:22px;grid-template-columns:1fr;align-items:center}
+  @media(min-width:760px){.beemrow{grid-template-columns:auto 1fr;gap:34px}}
+  .beembadge{width:120px;height:120px;border-radius:30px;background:var(--accent);color:var(--on-accent);
+    display:grid;place-items:center;margin-inline:auto;box-shadow:0 20px 50px -18px rgba(250,204,21,.5)}
+  .beembadge svg{width:58px;height:58px}
+  .beemrow h2{font-size:clamp(1.7rem,4.5vw,2.5rem)}
+  .beemrow p{color:var(--soft);margin-top:14px;font-size:1.08rem;max-width:48ch;font-family:var(--body)}
+
+  /* TestFlight band */
+  .tf{background:var(--accent);color:var(--on-accent)}
+  .tf .wrap{padding-block:clamp(48px,7vw,78px)}
+  .tf .eyebrow{color:var(--on-accent);opacity:.72}
+  .tf h2{font-size:clamp(2rem,6vw,3.4rem);max-width:18ch;margin-top:12px;color:var(--on-accent)}
+  .tf p{color:var(--on-accent);opacity:.8;max-width:46ch;margin-top:16px;font-size:1.08rem;font-family:var(--body)}
+  .tf .list{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+  .tf .l{background:rgba(11,11,12,.09);border:1px solid rgba(11,11,12,.18);border-radius:999px;
+    padding:7px 14px;font-weight:600;font-size:.9rem;font-family:var(--body)}
+  .tf .btn{background:var(--on-accent);color:var(--accent);margin-top:28px}
+
+  footer{border-top:1px solid var(--line);color:var(--muted);font-size:.85rem}
+  footer .wrap{padding-block:26px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-family:var(--body)}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap">
+</head>
+<body>
+<header>
+  <div class="wrap hrow">
+    <div class="brand">beem<span class="z">⚡</span>up</div>
+    <a class="btn" href="https://testflight.apple.com/join/DvhM8MsP" target="_blank" rel="noopener">Rejoindre la bêta</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">Le réseau social Hyrox</p>
+        <h1>Entraîne-toi avec des gens qui te <em>ressemblent.</em></h1>
+        <p class="lede">beem-up, c'est le fil de ta communauté Hyrox. Tu regardes leurs séances, tu t'en inspires — tu peux même les copier — et tu balances un<span class="bolt">⚡ beem</span> pour les soutenir.</p>
+        <div class="cta-row">
+          <a class="btn" href="https://testflight.apple.com/join/DvhM8MsP" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+            Rejoindre la bêta TestFlight
+          </a>
+          <button type="button" class="btn ghost js-notify-toggle" data-target="notify1">Me prévenir au lancement</button>
+        </div>
+        <form class="notify" id="notify1" hidden>
+          <div class="notify-row">
+            <input type="email" required placeholder="ton@email.com" aria-label="Ton email">
+            <button type="submit" class="btn">OK</button>
+          </div>
+          <p class="notify-msg" role="status" aria-live="polite"></p>
+        </form>
+        <p class="cta-note">
+          <span class="pill">iPhone</span>
+          <span class="pill">Gratuit</span>
+          <span class="pill">Places limitées</span>
+        </p>
+      </div>
+
+      <div class="stage">
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="screen">
+            <div class="ph-head">
+              <div>
+                <div class="ph-title">Accueil</div>
+                <div class="ph-sub">Ta communauté Hyrox</div>
+              </div>
+              <div class="gear" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8 2 2 0 1 1-2.8 2.8 1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0 1.7 1.7 0 0 0-2.9-1.2 2 2 0 1 1-2.8-2.8A1.7 1.7 0 0 0 4.6 15a2 2 0 1 1 0-4 1.7 1.7 0 0 0 1.2-2.9 2 2 0 1 1 2.8-2.8A1.7 1.7 0 0 0 11 4.6a2 2 0 1 1 4 0 1.7 1.7 0 0 0 2.9 1.2 2 2 0 1 1 2.8 2.8A1.7 1.7 0 0 0 19.4 11a2 2 0 1 1 0 4z"></path></svg>
+              </div>
+            </div>
+            <div class="feed">
+              <article class="card">
+                <div class="top">
+                  <div class="usr">
+                    <div class="ava" style="background:#FACC15;color:#0B0B0C">M</div>
+                    <div><div class="nm">Marc</div><div class="meta">Hier · Run</div></div>
+                  </div>
+                  <span class="tag">FRACTIONNÉ</span>
+                </div>
+                <div class="stats">
+                  <div><span class="big">60</span><span class="u">min</span></div>
+                  <div><span class="big y">5'30</span><span class="u">/km</span></div>
+                </div>
+                <div class="desc">4 × 8 min à 5'30/km — récup 2 min</div>
+                <div class="foot">
+                  <span class="feel">Ressenti : au top</span>
+                  <button class="beem" data-n="4" aria-label="Donner un beem">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"></path></svg><span class="cnt">4</span>
+                  </button>
+                </div>
+              </article>
+
+              <article class="card">
+                <div class="top">
+                  <div class="usr">
+                    <div class="ava" style="background:#2A2B2F;color:#F5F5F2">J</div>
+                    <div><div class="nm">Julie</div><div class="meta">Lun. · Circuit Hyrox</div></div>
+                  </div>
+                  <span class="tag">CIRCUIT</span>
+                </div>
+                <div class="stats">
+                  <div><span class="big">50</span><span class="u">min</span></div>
+                  <div><span class="big y">4</span><span class="u">tours</span></div>
+                </div>
+                <div class="desc">1000 m Ski erg · 20 Wall ball · 200 m Sled</div>
+                <div class="foot">
+                  <span class="feel">Ressenti : difficile</span>
+                  <button class="beem ghost" data-n="0" aria-label="Donner un beem">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"></path></svg><span class="cnt">Beem</span>
+                  </button>
+                </div>
+              </article>
+            </div>
+            <nav class="tabbar" aria-hidden="true">
+              <div class="tab on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V21H3z"></path></svg>Accueil</div>
+              <div class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="m15.5 8.5-2 5-5 2 2-5z"></path></svg>Explorer</div>
+              <div class="tab"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></span></div>
+              <div class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"></path></svg>Défis</div>
+              <div class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>Profil</div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="strip">
+    <div class="wrap">
+      <div class="cross">
+        <p class="x">Pas un <b>coach</b> qui ne t'a jamais vu courir.</p>
+        <p class="x">Pas une <b>élite</b> avec qui tu n'as rien en commun.</p>
+      </div>
+      <p class="turn">Juste des gens qui vivent la <u>même vie que toi</u> — et qui s'y mettent, séance après séance.</p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="shead">
+        <p class="eyebrow">Comment ça marche</p>
+        <h2>Trois gestes, zéro jargon.</h2>
+      </div>
+      <div class="steps">
+        <div class="step"><div class="n">1</div><h3>Tu suis qui t'inspire</h3><p>Autant de personnes que tu veux — celles qui te ressemblent, celles qui t'inspirent. Tu composes ton fil comme tu l'entends.</p></div>
+        <div class="step"><div class="n">2</div><h3>Tu t'inspires de leur prépa</h3><p>Regarde comment ils bossent leur semaine, telle qu'ils la vivent — pas un programme type figé. Tu t'en inspires, tu adaptes, et si une séance te parle, tu la copies en un geste.</p></div>
+        <div class="step"><div class="n">3</div><h3>Tu postes tes séances</h3><p>90 % du temps, on se prépare — on ne court pas. Partage tes séances de la semaine, les bonnes comme les galères. C'est ta constance qui parle, et qui embarque les autres.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" style="border-top:1px solid var(--line)">
+    <div class="wrap">
+      <div class="beemrow">
+        <div class="beembadge" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+        </div>
+        <div>
+          <p class="eyebrow">Le beem</p>
+          <h2>Un beem, c'est un coup de boost.</h2>
+          <p>Pas un like de vanité. Un vrai « vas-y, continue » entre gens qui galèrent sur les mêmes burpees. Tu envoies un ⚡ à une séance qui t'inspire, et tu deviens la raison pour laquelle quelqu'un y retourne demain.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tf">
+    <div class="wrap">
+      <p class="eyebrow">Accès anticipé</p>
+      <h2>Teste beem-up avant tout le monde.</h2>
+      <p>On ouvre quelques places sur TestFlight pour des pratiquants Hyrox. Installe l'app, entre dans le fil, et aide-nous à la façonner.</p>
+      <div class="list">
+        <span class="l">⚡ 2 minutes à installer</span>
+        <span class="l">iPhone requis</span>
+        <span class="l">100 % gratuit</span>
+        <span class="l">Tes retours comptent</span>
+      </div>
+      <a class="btn" href="https://testflight.apple.com/join/DvhM8MsP" target="_blank" rel="noopener">Rejoindre la bêta TestFlight</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>beem-up · le réseau social Hyrox</span>
+    <span>Bêta TestFlight · iPhone</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  document.querySelectorAll('.beem').forEach(function(b){
+    b.addEventListener('click',function(){
+      var n=parseInt(b.dataset.n||'0',10)+1;
+      b.dataset.n=n;
+      b.classList.remove('ghost');
+      b.querySelector('.cnt').textContent=n;
+      b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
+    });
+  });
+
+  // === Liste d'attente → Supabase ===
+  // Remplace les deux valeurs ci-dessous par celles de ton projet Supabase
+  // (Settings → API : Project URL et clé "anon public").
+  var SUPABASE_URL='https://mhzzgnavhkjddheqnlrh.supabase.co';
+  var SUPABASE_ANON_KEY='sb_publishable_b8ZDEeA0HEfKfRIUlpHROA_ctS2vcNR';
+
+  document.querySelectorAll('.js-notify-toggle').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var f=document.getElementById(btn.dataset.target);
+      if(!f)return;
+      f.hidden=!f.hidden;
+      if(!f.hidden){var i=f.querySelector('input'); if(i)i.focus();}
+    });
+  });
+
+  document.querySelectorAll('.notify').forEach(function(f){
+    f.addEventListener('submit',function(e){
+      e.preventDefault();
+      var input=f.querySelector('input');
+      var msg=f.querySelector('.notify-msg');
+      var sub=f.querySelector('button[type=submit]');
+      var email=(input.value||'').trim();
+      if(!email||email.indexOf('@')<1){msg.textContent='Vérifie ton adresse email.';msg.className='notify-msg err';return;}
+      sub.disabled=true; msg.textContent='…'; msg.className='notify-msg';
+      fetch(SUPABASE_URL+'/rest/v1/waitlist',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'apikey':SUPABASE_ANON_KEY,
+          'Authorization':'Bearer '+SUPABASE_ANON_KEY,
+          'Prefer':'return=minimal'
+        },
+        body:JSON.stringify({email:email})
+      }).then(function(r){
+        sub.disabled=false;
+        if(r.ok){msg.textContent='C’est noté ! On te prévient au lancement.';msg.className='notify-msg ok';f.reset();}
+        else if(r.status===409){msg.textContent='Tu es déjà sur la liste 👍';msg.className='notify-msg ok';f.reset();}
+        else{msg.textContent='Oups, réessaie dans un instant.';msg.className='notify-msg err';}
+      }).catch(function(){
+        sub.disabled=false;
+        msg.textContent='Oups, réessaie dans un instant.';msg.className='notify-msg err';
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
